@@ -20,6 +20,15 @@ Welcome to my Data Science and Analytics Portfolio! This repository contains a c
 - **Technologies:** Pandas, Ruptures, Matplotlib.
 - **Key Features:** Data cleaning and manipulation, implemented machine learning model to detect machine adjustments, automated iterative analysis on the generated data segments.
 
-### 3. Manufacturing Target Creation 
+## Getting Started
 
+To explore any of the projects listed above, navigate to the respective project file within my portfolio repository, and follow the instructions on the project's README file. Each project's README contains detailed information on how to set up and run the project. Please note that results may not look like the provided screenshots of the respective projects, as the data used for those projects is sensitive and non-public.
+
+## Contact
+
+Feel free to reach out to me if you have any questions or would like to discuss potential collaborations. You can contact me at:
+- Email: hefnertitus@gmail.com
+- LinkedIn: [Titus Hefner|LinkedIn](www.linkedin.com/in/titus-hefner-19622124b)
+
+Thank you for visiting my portfolio repository!
 
