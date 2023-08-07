@@ -20,6 +20,16 @@ Welcome to my Data Science and Analytics Portfolio! This repository contains a c
 - **Technologies:** Pandas, Ruptures, Matplotlib.
 - **Key Features:** Data cleaning and manipulation, implemented machine learning model to detect machine adjustments, automated iterative analysis on the generated data segments.
 
+### 2. Manufacturing Target Analysis
+![MfgTargetAppWindow](https://github.com/TitusHefner/Portfolio/assets/141271376/4732bb11-50d6-4f59-8e95-a701ab6a0e05)
+![DiameterControlChart](https://github.com/TitusHefner/Portfolio/assets/141271376/073a2267-28a4-4fd2-baea-48846e5d1a3c)
+![DiameterProcessCapability2](https://github.com/TitusHefner/Portfolio/assets/141271376/9c91c32a-b786-44c4-9a59-b723c8c23d5e)
+
+- **Description:** Analyzes machine capability and recommends parameter targets for user defined fields, given data on the features from the machine's product output (ex. spring diameter).
+- **Technologies:** Pandas, NumPy, Matplotlib, SciPy, Seaborn.
+- **Key Features:** Uses traditional Six-Sigma process capability analysis but with more flexibility to fit manufacturing demands, eliminates the need for expensive third-party analysis tools, gives clear visuals. 
+
+
 ## Getting Started
 
 To explore any of the projects listed above, navigate to the respective project file within my portfolio repository, and follow the instructions on the project's README file. Each project's README contains detailed information on how to set up and run the project. Please note that results may not look like the provided screenshots of the respective projects, as the data used for those projects is sensitive and non-public.
