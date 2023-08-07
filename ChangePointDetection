@@ -1,50 +1,46 @@
+#Import necessary libraries
 import pandas as pd
 import os
 import ruptures as rpt
 import matplotlib.pyplot as plt
-from tqdm.notebook import tqdm
-from joblib import Parallel, delayed
 
-
+#Set folder path containing data
 folder_path = 'path/to/folder'
 
+#This function reads multiple CSV files from a folder, creates DataFrames for each file using Pandas, and returns a list of these DataFrames.
 def read_csv_files_from_folder(folder_path):
     dataframes = []
     for filename in os.listdir(folder_path):
         if filename.endswith('.csv'):
             file_path = os.path.join(folder_path, filename)
-            df = pd.read_csv(file_path, delimiter=';')
+            df = pd.read_csv(file_path, delimiter=';') #You will need to modify the delimiter to fit the needs of your csv
             dataframes.append(df)
     return dataframes
 
 
-dataframes_list = read_csv_files_from_folder(folder_path)
+dataframes_list = read_csv_files_from_folder(folder_path) #Read CSV files from a folder and store their DataFrames.
 
+combined_df = pd.concat(dataframes_list, ignore_index=True) #Combine the DataFrames into a single DataFrame.
 
-combined_df = pd.concat(dataframes_list, ignore_index=True)
+combined_df['Sample'] = combined_df.index + 1 #Add a 'Sample' column with sequential index + 1.
 
+combined_df.tail() #Display the last rows of the combined DataFrame.
 
-combined_df['Sample'] = combined_df.index + 1
+data = combined_df['USER_INPUT_VARIABLE'].values.reshape(-1, 1) #Extract the 'USER_INPUT_VARIABLE' column data as a 2D array for further use.
 
-
-combined_df.tail()
-
-
-data = combined_df['corrected diameter [mm] '].values.reshape(-1, 1)
-
-
+#define the parameters of the fit_pelt algorithm
 model = 'l1'
 pen = 5
 
-
+#This function applies a changepoint detection algorithm to input data and returns the detected changepoints
 def fit_pelt(data, model, jump, pen):
     algo = rpt.Pelt(model=model, jump=jump).fit(data)
     result = algo.predict(pen=pen)
     return result
 
-
+#
 def calculate_targets(chunk_df, usl, lsl, n):
-    sigma = chunk_df['corrected diameter [mm] '].std()
+    sigma = chunk_df['USER_INPUT_VARIABLE'].std()
     upper_target = ((usl + lsl) / 2) + (n * sigma)
     lower_target = ((usl + lsl) / 2) - (n * sigma)
     return upper_target, lower_target
@@ -76,7 +72,7 @@ lower_targets = []
 plt.figure(figsize=(12, 6))
 for s in change_points:
     plt.axvline(x=s, color='r', linestyle='--', linewidth=2, alpha=0.7)
-plt.plot(combined_df['Sample'], combined_df['corrected diameter [mm] '], label='Diameter')
+plt.plot(combined_df['Sample'], combined_df['USER_INPUT_VARIABLE'], label='Diameter')
 plt.xlabel('Sample Number')
 plt.ylabel('Diameter')
 plt.title('Segmentation Change Points vs. Whole Dataset')
@@ -88,7 +84,7 @@ for i, segment_df in enumerate(segments_dataframes):
     # Perform analysis on each segment_df as needed
     # For example, you can plot or analyze each segment here
     plt.figure(figsize=(8, 4))
-    plt.plot(segment_df['Sample'], segment_df['corrected diameter [mm] '])
+    plt.plot(segment_df['Sample'], segment_df['USER_INPUT_VARIABLE'])
     plt.xlabel('Sample Number')
     plt.ylabel('Diameter')
     plt.title(f'Segment {i+1}')
@@ -102,7 +98,7 @@ for i, segment_df in enumerate(segments_dataframes):
     upper_targets.append(upper_target * weight)
     lower_targets.append(lower_target * weight)
     plt.figure(figsize=(8, 4))
-    plt.plot(segment_df['Sample'], segment_df['corrected diameter [mm] '], label='Segment Data')
+    plt.plot(segment_df['Sample'], segment_df['USER_INPUT_VARIABLE'], label='Segment Data')
     plt.axhline(usl, color='y', linestyle='solid', label='USL')
     plt.axhline(lsl, color='y', linestyle='solid', label='LSL')
     plt.axhline(((usl + lsl) / 2), color='g', linestyle='solid', label='Nominal')
