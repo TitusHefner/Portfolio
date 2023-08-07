@@ -2,7 +2,7 @@
 
 Welcome to my Data Science and Analytics Portfolio! This repository contains a collection of Python projects focused on data analysis, machine learning, and data visualization. Each project included highlights different aspects of data analysis, from data cleaning and exploration to analysis and visualization. Feel free to explore my projects ad learn about my skills in working with data. Each of the included projects are real projects that I have completed in my time working in data analysis in a manufacturing engineering context.
 
-##Projects
+## Projects
 
 ### 1. Mechanical Signal Outlier Replacement 
 ![Outlier1](https://github.com/TitusHefner/Portfolio/assets/141271376/b4a00806-0c87-4ace-bb72-e0471ac6a2bc)
