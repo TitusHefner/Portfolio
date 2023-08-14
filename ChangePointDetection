@@ -1,44 +1,44 @@
-#Import necessary libraries
+                                                                                #Import necessary libraries
 import pandas as pd
 import os
 import ruptures as rpt
 import matplotlib.pyplot as plt
 
-#Set folder path containing data
+                                                                                #Set folder path containing data
 folder_path = 'path/to/folder'
 
-#This function reads multiple CSV files from a folder, creates DataFrames for each file using Pandas, and returns a list of these DataFrames.
+                                                                                #This function reads multiple CSV files from a folder, creates DataFrames for each file using Pandas, and returns a list of these DataFrames.
 def read_csv_files_from_folder(folder_path):
     dataframes = []
     for filename in os.listdir(folder_path):
         if filename.endswith('.csv'):
             file_path = os.path.join(folder_path, filename)
-            df = pd.read_csv(file_path, delimiter=';') #You will need to modify the delimiter to fit the needs of your csv
+            df = pd.read_csv(file_path, delimiter=';')                          #You will need to modify the delimiter to fit the needs of your csv
             dataframes.append(df)
     return dataframes
 
 
-dataframes_list = read_csv_files_from_folder(folder_path) #Read CSV files from a folder and store their DataFrames.
+dataframes_list = read_csv_files_from_folder(folder_path)                       #Read CSV files from a folder and store their DataFrames.
 
-combined_df = pd.concat(dataframes_list, ignore_index=True) #Combine the DataFrames into a single DataFrame.
+combined_df = pd.concat(dataframes_list, ignore_index=True)                     #Combine the DataFrames into a single DataFrame.
 
-combined_df['Sample'] = combined_df.index + 1 #Add a 'Sample' column with sequential index + 1.
+combined_df['Sample'] = combined_df.index + 1                                   #Add a 'Sample' column with sequential index + 1.
 
-combined_df.tail() #Display the last rows of the combined DataFrame.
+combined_df.tail()                                                              #Display the last rows of the combined DataFrame.
 
-data = combined_df['USER_INPUT_VARIABLE'].values.reshape(-1, 1) #Extract the 'USER_INPUT_VARIABLE' column data as a 2D array for further use.
+data = combined_df['USER_INPUT_VARIABLE'].values.reshape(-1, 1)                 #Extract the 'USER_INPUT_VARIABLE' column data as a 2D array for further use.
 
-#define the parameters of the fit_pelt algorithm
+                                                                                #define the parameters of the fit_pelt algorithm
 model = 'l1'
 pen = 5
 
-#This function applies a changepoint detection algorithm to input data and returns the detected changepoints
+                                                                                #This function applies a changepoint detection algorithm to input data and returns the detected changepoints
 def fit_pelt(data, model, jump, pen):
     algo = rpt.Pelt(model=model, jump=jump).fit(data)
     result = algo.predict(pen=pen)
     return result
 
-#
+                                                                                #Calculates upper and lower target values using data chunk, limits, and a multiplier.
 def calculate_targets(chunk_df, usl, lsl, n):
     sigma = chunk_df['USER_INPUT_VARIABLE'].std()
     upper_target = ((usl + lsl) / 2) + (n * sigma)
@@ -46,7 +46,7 @@ def calculate_targets(chunk_df, usl, lsl, n):
     return upper_target, lower_target
 
 
-change_points = fit_pelt(data, model, jump=1, pen=pen)
+change_points = fit_pelt(data, model, jump=1, pen=pen)                          #Detects change points in the given data using the PELT algorithm with specified parameters. Initializes an empty list to store segmented dataframes.
 
 
 segments_dataframes = []
@@ -57,16 +57,16 @@ for i, cp in enumerate(change_points):
         segment_df = combined_df.iloc[:cp].copy()
     else:
         segment_df = combined_df.iloc[change_points[i-1]:cp].copy()
-    segments_dataframes.append(segment_df)
+    segments_dataframes.append(segment_df)                                      #Creates segmented dataframes based on change points and adds them to segments_dataframes list.
 
 
 usl = 71.5
 lsl = 68.5
-n = 2
+n = 2                                                                           #Define your upper specification limit, lower specification limit, and your multiple of standard deviation
 
 
 upper_targets = []
-lower_targets = []
+lower_targets = []                                                              #Creates lists to store upper and lower target values
 
 
 plt.figure(figsize=(12, 6))
@@ -77,18 +77,16 @@ plt.xlabel('Sample Number')
 plt.ylabel('Diameter')
 plt.title('Segmentation Change Points vs. Whole Dataset')
 plt.legend()
-plt.show()
+plt.show()                                                                      #Graphs where change points were detected
 
 
 for i, segment_df in enumerate(segments_dataframes):
-    # Perform analysis on each segment_df as needed
-    # For example, you can plot or analyze each segment here
     plt.figure(figsize=(8, 4))
     plt.plot(segment_df['Sample'], segment_df['USER_INPUT_VARIABLE'])
     plt.xlabel('Sample Number')
     plt.ylabel('Diameter')
     plt.title(f'Segment {i+1}')
-    plt.show()
+    plt.show()                                                                  #Graphs each segment
 
 
 for i, segment_df in enumerate(segments_dataframes):
@@ -108,7 +106,7 @@ for i, segment_df in enumerate(segments_dataframes):
     plt.ylabel('Diameter')
     plt.title(f'Segment {i+1}')
     plt.legend()
-    plt.show()
+    plt.show()                                                                    #Graphs each segment's analysis with upper and lower targets
 
 
 weighted_avg_upper_target = sum(upper_targets) / sum(len(df) for df in segments_dataframes)
@@ -120,4 +118,4 @@ print(f"Weighted Average Lower Target: {weighted_avg_lower_target}")
 
 
 tolerance = (weighted_avg_upper_target - weighted_avg_lower_target)/2
-print("Tolerance [mm] is +/- ", tolerance)
+print("Tolerance [mm] is +/- ", tolerance)                                        #Calculates and prints upper and lower targets, as well as tolerance range of the entire dataset, using a weighted average of the segmented analysis
